@@ -20,7 +20,7 @@ int main() {
         // Child: execute su -c "whoami"
         execlp("su", "su", "-c", "whoami", NULL);
         if (errno == ENOENT) {
-            fprintf(stderr, "su command not found\n");
+            fprintf(stderr, "SUCMDNOTFND\n");
             exit(1);   // 1 = su not found
         } else {
             perror("execlp");
@@ -35,6 +35,7 @@ int main() {
     int sent_password = 0;
     int auth_failed = 0;
     int got_whoami = 0;
+    int notfound = 0;
     char output[4096] = {0};
     size_t output_len = 0;
 
@@ -59,10 +60,14 @@ int main() {
             auth_failed = 1;
             }
 
-            // Detect success output (whoami should output "root\n")
-            if (strstr(buf, "root") != NULL) {
-                got_whoami = 1;
-            }
+        if (strcasestr(buf, "SUCMDNOTFND") != NULL) {
+            notfound = 1;
+        }
+
+        // Detect success output (whoami should output "root\n")
+        if (strstr(buf, "root") != NULL) {
+            got_whoami = 1;
+        }
     }
 
     int status;
@@ -76,6 +81,9 @@ int main() {
         if (exit_status == 0 && got_whoami) {
             printf("FLI00: Success: running as root\n");
             return 0;
+        }
+        if (exit_status == 1 && notfound) {
+            fprintf(stderr, "FLI22: Not su rooted.\n");
         } else {
             fprintf(stderr, "FLI82: su exited with status %d\n", exit_status);
             return 3;
