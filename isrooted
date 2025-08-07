@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ "$(sudo whoami)" = "0" ]; then
+ echo "This CI is sudo rooted."
+fi
+
+if [ $(echo 'root' | su -t -c "whoami") = "0" ]; then
+ echo "This CI is su rooted."
+fi
