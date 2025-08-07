@@ -11,11 +11,11 @@ gcc "${SUROOTCHECKER}.c" -o "$SUROOTCHECKER"
 
 FLICODE=$($SUROOTCHECKER 2>&1 | tail -n1 | cut -d: -f1)
 
-if [ "$(FLICODE)" = "FLI00" ]; then
+if [ "$FLICODE" = "FLI00" ]; then
  echo "This CI is su rooted."
-elif [ "$(FLICODE)" = "FLI68" ]; then
+elif [ "$FLICODE" = "FLI68" ]; then
  echo "This CI is su rooted but can't get password
-elif [ "$(FLICODE)" = "FLI22" ]; then
+elif [ "$FLICODE" = "FLI22" ]; then
  echo "This CI is not su rooted."
 else
  echo "This CI seems to be su rooted but somethin's wrong, FLI code is $FLICODE"
