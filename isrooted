@@ -1,8 +1,14 @@
 #!/bin/sh
 if [ "$(sudo whoami)" = "0" ]; then
  echo "This CI is sudo rooted."
+else
+ echo "This CI is not sudo rooted."
 fi
 
-if [ $(echo 'root' | su -t -c "whoami") = "0" ]; then
+if [ $(echo 'root' | su -T -c "whoami") = "0" ]; then
  echo "This CI is su rooted."
+else if [ $(echo 'root' | su -T -c "true" | grep -i incorrect -q) != 0]; then
+ echo "This CI is su rooted but the password bruteforce failed."
+else
+ echo "This CI is not su rooted."
 fi
